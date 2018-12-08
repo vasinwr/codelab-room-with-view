@@ -1,5 +1,7 @@
 package vasin.roomwordsample
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.Snackbar
@@ -12,6 +14,8 @@ import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var wordViewModel: WordViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,6 +31,13 @@ class MainActivity : AppCompatActivity() {
         val adapter = WordListAdapter(this)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
+
+
+        wordViewModel = ViewModelProviders.of(this).get(WordViewModel::class.java)
+        wordViewModel.allWords.observe(this, Observer { words ->
+            // Update the cached copy of the words in the adapter.
+            words?.let { adapter.setWords(it) }
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
